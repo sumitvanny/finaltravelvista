@@ -1,0 +1,13 @@
+.booking-layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; padding: 40px 0 80px; align-items: start; }
+.booking-summary { position: sticky; top: 94px; }
+.summary-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--glass-border); font-size: 0.92rem; }
+.summary-row.total { font-weight: 700; font-size: 1.1rem; border-bottom: none; color: var(--gold-400); }
+.summary-dest-img { border-radius: var(--radius-md); overflow: hidden; margin-bottom: 16px; aspect-ratio: 16/10; }
+.summary-dest-img img { width: 100%; height: 100%; object-fit: cover; }
+.confirmation-hero { text-align: center; padding: 60px 20px; }
+.confirmation-check { width: 88px; height: 88px; border-radius: 50%; background: rgba(74,222,128,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 2.4rem; color: var(--success); }
+.ref-code { font-family: var(--font-mono); font-size: 1.3rem; letter-spacing: 0.05em; color: var(--gold-400); }
+@media (max-width: 900px) {
+  .booking-layout { grid-template-columns: 1fr; }
+  .booking-summary { position: static; }
+}

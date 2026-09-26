@@ -1,0 +1,5 @@
+/* Register page reuses login.css layout; small overrides for the longer form */
+.auth-card.register { max-width: 460px; }
+.password-strength { height: 4px; border-radius: 4px; background: var(--glass-border); margin-top: 8px; overflow: hidden; }
+.password-strength-bar { height: 100%; width: 0%; background: var(--danger); transition: width 0.3s ease, background 0.3s ease; }
+.terms-row { font-size: 0.82rem; color: var(--mist-500); }

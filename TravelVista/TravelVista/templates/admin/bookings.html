@@ -1,0 +1,50 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Bookings — TravelVista Admin{% endblock %}
+{% block content %}
+<div class="admin-topbar"><h1>Booking Management</h1></div>
+
+<div class="admin-search-bar">
+  <a href="{{ url_for('admin.bookings') }}" class="btn btn-sm {{ 'btn-primary' if not status else 'btn-ghost' }}">All</a>
+  {% for s in ['confirmed','pending','completed','cancelled'] %}
+  <a href="{{ url_for('admin.bookings', status=s) }}" class="btn btn-sm {{ 'btn-primary' if status == s else 'btn-ghost' }}">{{ s|title }}</a>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead><tr><th>Reference</th><th>User</th><th>Destination</th><th>Travel Date</th><th>Total</th><th>Status</th><th>Update</th></tr></thead>
+      <tbody>
+        {% for bk in bookings %}
+        <tr>
+          <td class="text-mono">{{ bk.booking_reference }}</td>
+          <td>{{ bk.user.username }}</td>
+          <td>{{ bk.destination.name }}</td>
+          <td class="text-muted">{{ bk.travel_date.strftime('%b %d, %Y') }}</td>
+          <td class="text-mono">${{ "%.2f"|format(bk.total_amount) }}</td>
+          <td><span class="badge badge-{{ bk.status }}">{{ bk.status|title }}</span></td>
+          <td>
+            <form action="{{ url_for('admin.update_booking_status', booking_id=bk.id) }}" method="POST" class="flex gap-8">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <select name="status" onchange="this.form.submit()">
+                {% for s in ['confirmed','pending','completed','cancelled'] %}
+                <option value="{{ s }}" {{ "selected" if bk.status == s }}>{{ s|title }}</option>
+                {% endfor %}
+              </select>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted" style="padding:32px;">No bookings found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="pagination">
+  {% if pagination.has_prev %}<a href="{{ url_for('admin.bookings', page=pagination.prev_num, status=status) }}">&larr; Prev</a>{% endif %}
+  <span class="active">{{ pagination.page }}</span>
+  {% if pagination.has_next %}<a href="{{ url_for('admin.bookings', page=pagination.next_num, status=status) }}">Next &rarr;</a>{% endif %}
+</div>
+{% endblock %}

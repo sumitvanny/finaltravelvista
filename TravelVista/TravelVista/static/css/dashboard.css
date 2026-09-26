@@ -1,0 +1,37 @@
+.dash-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 32px;
+  padding: 40px 0 80px;
+}
+.dash-sidebar { position: sticky; top: 94px; align-self: start; }
+.dash-sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
+.dash-sidebar-nav a {
+  padding: 11px 16px; border-radius: var(--radius-sm);
+  font-size: 0.92rem; font-weight: 500; color: var(--mist-300);
+  display: flex; align-items: center; gap: 10px;
+  transition: all var(--transition-fast);
+}
+.dash-sidebar-nav a:hover { background: var(--glass-fill); color: var(--mist-50); }
+.dash-sidebar-nav a.active { background: var(--glass-fill-strong); color: var(--gold-400); }
+
+.dash-profile-mini { text-align: center; padding: 24px 16px; }
+.dash-profile-mini img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin: 0 auto 12px; border: 2px solid var(--gold-400); }
+.completion-bar { height: 6px; background: var(--glass-border); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+.completion-fill { height: 100%; background: linear-gradient(90deg, var(--teal-400), var(--gold-400)); }
+
+.stat-card { display: flex; flex-direction: column; gap: 4px; }
+.stat-card .value { font-family: var(--font-display); font-size: 2rem; color: var(--mist-50); }
+.stat-card .label { font-size: 0.8rem; color: var(--mist-500); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.mini-list { display: flex; flex-direction: column; gap: 12px; }
+.mini-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.03); }
+
+.notif-item { display: flex; gap: 12px; padding: 12px; border-radius: var(--radius-sm); }
+.notif-item.unread { background: rgba(45, 212, 191, 0.06); }
+.notif-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--glass-fill-strong); flex-shrink: 0; }
+
+@media (max-width: 900px) {
+  .dash-layout { grid-template-columns: 1fr; }
+  .dash-sidebar { position: static; }
+}

@@ -1,0 +1,10 @@
+.profile-header { display: flex; gap: 24px; align-items: center; padding: 32px; margin-bottom: 32px; }
+.profile-header img { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gold-400); }
+.profile-picture-upload { position: relative; display: inline-block; }
+.profile-picture-upload input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--glass-border); margin-bottom: 28px; flex-wrap: wrap; }
+.tab-btn { padding: 12px 20px; background: none; border: none; color: var(--mist-500); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; font-size: 0.92rem; }
+.tab-btn.active { color: var(--gold-400); border-bottom-color: var(--gold-400); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease both; }
+.danger-zone { border: 1px solid rgba(248,113,113,0.3); background: rgba(248,113,113,0.05); }

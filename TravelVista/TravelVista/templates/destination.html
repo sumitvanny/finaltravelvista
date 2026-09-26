@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}{{ dest.name }} — TravelVista{% endblock %}
+{% block content %}
+
+<div style="position:relative; height:420px; overflow:hidden;">
+  <img src="{{ url_for('static', filename='images/uploads/destinations/' ~ dest.cover_image) if dest.cover_image != 'default_destination.jpg' else url_for('static', filename='images/default_destination.jpg') }}"
+       alt="{{ dest.name }}" style="width:100%; height:100%; object-fit:cover;">
+  <div style="position:absolute; inset:0; background: linear-gradient(180deg, rgba(7,12,20,0.1), rgba(7,12,20,0.95));"></div>
+  <div class="container" style="position:absolute; bottom:32px; left:50%; transform:translateX(-50%); width:100%;">
+    <span class="badge badge-gold">{{ dest.travel_type|title }}</span>
+    <h1 style="margin:12px 0 6px;">{{ dest.name }}</h1>
+    <p class="text-muted" style="margin:0;">{{ dest.city }}{{ ", " if dest.city }}{{ dest.country }} &middot; <span class="stars">&#9733; {{ dest.rating }}</span> ({{ dest.review_count }} reviews)</p>
+  </div>
+</div>
+
+<div class="container" style="padding:40px 0 80px;">
+  <div class="grid" style="grid-template-columns: 1.6fr 1fr; gap:32px; align-items:start;">
+
+    <div>
+      {% if gallery %}
+      <div class="grid grid-4" style="margin-bottom:32px;">
+        {% for img in gallery %}
+        <div style="aspect-ratio:1; border-radius:var(--radius-md); overflow:hidden;">
+          <img src="{{ url_for('static', filename='images/uploads/destinations/' ~ img.filename) }}" alt="{{ dest.name }} gallery" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="card" style="margin-bottom:24px;">
+        <h2 style="font-size:1.4rem;">Overview</h2>
+        <p>{{ dest.overview or dest.description }}</p>
+      </div>
+
+      {% if dest.things_to_do_list() %}
+      <div class="card" style="margin-bottom:24px;">
+        <h2 style="font-size:1.4rem;">Things To Do</h2>
+        <div class="grid grid-2">
+          {% for item in dest.things_to_do_list() %}
+          <div class="flex items-center gap-8"><span class="text-teal">&#9670;</span> {{ item }}</div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="grid grid-2" style="margin-bottom:24px;">
+        {% if dest.hotels_list() %}
+        <div class="card">
+          <h3>Hotels</h3>
+          <ul style="padding-left:18px; color:var(--mist-300);">
+            {% for h in dest.hotels_list() %}<li>{{ h }}</li>{% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        {% if dest.restaurants_list() %}
+        <div class="card">
+          <h3>Restaurants</h3>
+          <ul style="padding-left:18px; color:var(--mist-300);">
+            {% for r in dest.restaurants_list() %}<li>{{ r }}</li>{% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+
+      {% if dest.transportation_list() %}
+      <div class="card" style="margin-bottom:24px;">
+        <h3>Getting Around</h3>
+        <ul style="padding-left:18px; color:var(--mist-300);">
+          {% for t in dest.transportation_list() %}<li>{{ t }}</li>{% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <div class="grid grid-2" style="margin-bottom:24px;">
+        <div class="card">
+          <h3>&#128506; Map</h3>
+          {% if dest.map_lat and dest.map_lng %}
+          <div class="skeleton" style="height:180px; display:flex; align-items:center; justify-content:center; color:var(--mist-500); font-size:0.85rem;">
+            Map placeholder &middot; {{ dest.map_lat }}, {{ dest.map_lng }}
+          </div>
+          {% else %}
+          <p class="text-muted">Map data not yet available for this destination.</p>
+          {% endif %}
+        </div>
+        <div class="card">
+          <h3>&#9728;&#65039; Weather</h3>
+          <div class="skeleton" style="height:180px; display:flex; align-items:center; justify-content:center; color:var(--mist-500); font-size:0.85rem;">
+            Live weather placeholder
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:24px;">
+        <h3>Best Time To Visit</h3>
+        <p>{{ dest.best_time_to_visit or "Year-round" }}</p>
+        <hr class="divider">
+        <h3>Safety Tips</h3>
+        <p>{{ dest.safety_tips or "Standard travel precautions apply." }}</p>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size:1.4rem;">Reviews ({{ reviews|length }})</h2>
+
+        {% if current_user.is_authenticated and current_user.__class__.__name__ == 'User' %}
+        <form method="POST" action="{{ url_for('main.submit_review', destination_id=dest.id) }}" style="margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--glass-border);">
+          {{ review_form.hidden_tag() }}
+          <label style="font-weight:600; font-size:0.9rem; margin-bottom:8px; display:block;">{{ "Update your review" if user_review else "Leave a review" }}</label>
+          <div class="rating-input" style="margin-bottom:12px;">
+            {% for i in [5,4,3,2,1] %}
+            <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" {{ "checked" if user_review and user_review.rating == i }}>
+            <label for="star{{ i }}">&#9733;</label>
+            {% endfor %}
+          </div>
+          <textarea name="comment" placeholder="Share your experience...">{{ user_review.comment if user_review else "" }}</textarea>
+          <div class="flex gap-12" style="margin-top:12px;">
+            <button type="submit" class="btn btn-primary btn-sm">{{ "Update Review" if user_review else "Submit Review" }}</button>
+            {% if user_review %}
+            <button type="submit" formaction="{{ url_for('main.delete_review', destination_id=dest.id) }}" class="btn btn-danger btn-sm">Delete My Review</button>
+            {% endif %}
+          </div>
+        </form>
+        {% endif %}
+
+        {% for r in reviews %}
+        <div style="padding:16px 0; border-bottom:1px solid var(--glass-border);">
+          <div class="flex justify-between items-center">
+            <strong>{{ r.user.full_name or r.user.username }}</strong>
+            <span class="stars">{{ ("&#9733;" * r.rating) | safe }}</span>
+          </div>
+          <p style="margin:8px 0 0;">{{ r.comment }}</p>
+          <span class="text-muted" style="font-size:0.78rem;">{{ r.created_at.strftime('%b %d, %Y') }}</span>
+        </div>
+        {% else %}
+        <p class="text-muted">No reviews yet. Be the first to share your experience!</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div style="position:sticky; top:94px;">
+      <div class="card" style="margin-bottom:20px;">
+        <div class="flex justify-between items-center" style="margin-bottom:16px;">
+          <span class="text-muted">From</span>
+          <span class="text-mono text-gold" style="font-size:1.6rem;">${{ "%.0f"|format(dest.price_per_person) }}<span class="text-muted" style="font-size:0.8rem;">/person</span></span>
+        </div>
+        <div class="summary-row"><span>Typical duration</span><span>{{ dest.duration_days }} days</span></div>
+        <div class="summary-row"><span>Rating</span><span class="stars">&#9733; {{ dest.rating }}</span></div>
+        {% if current_user.is_authenticated and current_user.__class__.__name__ == 'User' %}
+        <a href="{{ url_for('main.booking', destination_id=dest.id) }}" class="btn btn-primary btn-block" style="margin-top:16px;">Book This Trip</a>
+        <form action="{{ url_for('main.toggle_wishlist', destination_id=dest.id) }}" method="POST" style="margin-top:10px;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-ghost btn-block">{{ "&#9829; Remove from Wishlist" | safe if in_wishlist else "&#9825; Save to Wishlist" | safe }}</button>
+        </form>
+        {% else %}
+        <a href="{{ url_for('auth.login', next=request.path) }}" class="btn btn-primary btn-block" style="margin-top:16px;">Log In to Book</a>
+        {% endif %}
+      </div>
+
+      {% if related %}
+      <div>
+        <h3 style="font-size:1.1rem;">More in {{ dest.country }}</h3>
+        <div class="flex flex-col gap-12">
+          {% for r in related %}
+          <a href="{{ url_for('main.destination_detail', destination_id=r.id) }}" class="card flex gap-12 items-center" style="padding:12px;">
+            <img src="{{ url_for('static', filename='images/uploads/destinations/' ~ r.cover_image) if r.cover_image != 'default_destination.jpg' else url_for('static', filename='images/default_destination.jpg') }}" style="width:60px; height:60px; border-radius:var(--radius-sm); object-fit:cover;">
+            <div>
+              <strong style="font-size:0.9rem;">{{ r.name }}</strong>
+              <p class="text-muted mb-0" style="font-size:0.8rem;">${{ "%.0f"|format(r.price_per_person) }}/person</p>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

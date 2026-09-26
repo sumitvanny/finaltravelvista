@@ -1,0 +1,46 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Users — TravelVista Admin{% endblock %}
+{% block content %}
+<div class="admin-topbar"><h1>User Management</h1></div>
+
+<form method="GET" class="admin-search-bar">
+  <input type="text" name="q" value="{{ query }}" placeholder="Search by username, email, or name...">
+  <button type="submit" class="btn btn-ghost">Search</button>
+</form>
+
+<div class="card">
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead><tr><th>User</th><th>Email</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>{{ u.full_name or u.username }} <span class="text-muted">({{ u.username }})</span></td>
+          <td>{{ u.email }}</td>
+          <td class="text-muted">{{ u.created_at.strftime('%b %d, %Y') }}</td>
+          <td><span class="badge badge-{{ 'active' if u.is_active_account else 'inactive' }}">{{ 'Active' if u.is_active_account else 'Inactive' }}</span></td>
+          <td class="row-actions">
+            <form action="{{ url_for('admin.toggle_user_active', user_id=u.id) }}" method="POST">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="icon-btn" title="{{ 'Deactivate' if u.is_active_account else 'Activate' }}">{{ "&#10060;" | safe if u.is_active_account else "&#9989;" | safe }}</button>
+            </form>
+            <form action="{{ url_for('admin.delete_user', user_id=u.id) }}" method="POST" onsubmit="return confirm('Delete user {{ u.username }}? This cannot be undone.');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="icon-btn" title="Delete">&#128465;&#65039;</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-center text-muted" style="padding:32px;">No users found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="pagination">
+  {% if pagination.has_prev %}<a href="{{ url_for('admin.users', page=pagination.prev_num, q=query) }}">&larr; Prev</a>{% endif %}
+  <span class="active">{{ pagination.page }}</span>
+  {% if pagination.has_next %}<a href="{{ url_for('admin.users', page=pagination.next_num, q=query) }}">Next &rarr;</a>{% endif %}
+</div>
+{% endblock %}

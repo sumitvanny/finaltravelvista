@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}File Too Large — TravelVista{% endblock %}
+{% block content %}
+<div class="container section text-center">
+  <div class="empty-state">
+    <div class="icon">&#128190;</div>
+    <h1>That file is too large</h1>
+    <p>Please upload an image smaller than 8 MB.</p>
+    <a href="javascript:history.back()" class="btn btn-primary">Go Back</a>
+  </div>
+</div>
+{% endblock %}

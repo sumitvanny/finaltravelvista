@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Admin — TravelVista{% endblock %}</title>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% block extra_css %}{% endblock %}
+</head>
+<body class="admin-body">
+
+<div class="flash-container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="flash flash-{{ category }}">
+        <span>{{ message }}</span>
+        <button class="flash-close">&times;</button>
+      </div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+<div class="admin-shell">
+  <aside class="admin-rail">
+    <div class="admin-brand">TravelVista <span class="text-gold">Admin</span></div>
+    <nav class="admin-nav">
+      <a href="{{ url_for('admin.dashboard') }}" class="{{ 'active' if request.endpoint == 'admin.dashboard' }}">&#128200; Dashboard</a>
+      <span class="section-label">Manage</span>
+      <a href="{{ url_for('admin.users') }}" class="{{ 'active' if request.endpoint == 'admin.users' }}">&#128100; Users</a>
+      <a href="{{ url_for('admin.bookings') }}" class="{{ 'active' if request.endpoint == 'admin.bookings' }}">&#127974; Bookings</a>
+      <a href="{{ url_for('admin.destinations') }}" class="{{ 'active' if request.endpoint in ['admin.destinations', 'admin.new_destination', 'admin.edit_destination'] }}">&#127760; Destinations</a>
+      <a href="{{ url_for('admin.messages') }}" class="{{ 'active' if request.endpoint == 'admin.messages' }}">&#128172; Messages</a>
+      <span class="section-label">Insights</span>
+      <a href="{{ url_for('admin.reports') }}" class="{{ 'active' if request.endpoint == 'admin.reports' }}">&#128202; Reports</a>
+      <span class="section-label">Account</span>
+      <a href="{{ url_for('admin.settings') }}" class="{{ 'active' if request.endpoint == 'admin.settings' }}">&#9881;&#65039; Settings</a>
+      <a href="{{ url_for('admin.admin_logout') }}">&#8617; Logout</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

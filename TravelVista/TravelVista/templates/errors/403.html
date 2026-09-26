@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Access Denied — TravelVista{% endblock %}
+{% block content %}
+<div class="container section text-center">
+  <div class="empty-state">
+    <div class="icon">&#128274;</div>
+    <h1>Access denied</h1>
+    <p>You don't have permission to view this page.</p>
+    <a href="{{ url_for('main.index') }}" class="btn btn-primary">Back to Home</a>
+  </div>
+</div>
+{% endblock %}

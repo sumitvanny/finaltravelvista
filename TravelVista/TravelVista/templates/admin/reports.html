@@ -1,0 +1,67 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Reports — TravelVista Admin{% endblock %}
+{% block content %}
+<div class="admin-topbar"><h1>Reports & Analytics</h1></div>
+
+<div class="kpi-grid">
+  <div class="card kpi-card">
+    <div class="kpi-value">${{ "%.0f"|format(total_revenue) }}</div>
+    <div class="kpi-label">Total Revenue (Paid)</div>
+  </div>
+</div>
+
+<div class="grid" style="grid-template-columns: 1fr 1fr;">
+  <div class="card">
+    <h3>Bookings By Status</h3>
+    {% for status, count in bookings_by_status.items() %}
+    <div class="chart-bar-row">
+      <span style="min-width:110px; font-size:0.85rem;">{{ status|title }}</span>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:{{ (count / (bookings_by_status.values()|sum or 1) * 100)|round }}%;"></div></div>
+      <span class="text-mono" style="font-size:0.82rem;">{{ count }}</span>
+    </div>
+    {% else %}
+    <p class="text-muted">No bookings yet.</p>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <h3>Destinations By Type</h3>
+    {% for type, count in destinations_by_type.items() %}
+    <div class="chart-bar-row">
+      <span style="min-width:110px; font-size:0.85rem;">{{ (type or "Unspecified")|title }}</span>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:{{ (count / (destinations_by_type.values()|sum or 1) * 100)|round }}%;"></div></div>
+      <span class="text-mono" style="font-size:0.82rem;">{{ count }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="grid" style="grid-template-columns: 1fr 1fr; margin-top:24px;">
+  <div class="card">
+    <h3>Top Rated Destinations</h3>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Destination</th><th>Rating</th><th>Reviews</th></tr></thead>
+        <tbody>
+          {% for d in top_rated %}
+          <tr><td>{{ d.name }}</td><td class="stars">&#9733; {{ d.rating }}</td><td>{{ d.review_count }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Monthly Revenue</h3>
+    {% for month, amount in monthly_revenue %}
+    <div class="chart-bar-row">
+      <span class="text-mono" style="min-width:70px; font-size:0.82rem;">{{ month }}</span>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:{{ (amount / max_monthly_revenue * 100)|round }}%;"></div></div>
+      <span class="text-mono" style="font-size:0.82rem;">${{ "%.0f"|format(amount) }}</span>
+    </div>
+    {% else %}
+    <p class="text-muted">No revenue recorded yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

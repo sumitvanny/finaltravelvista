@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}TravelVista — Plan Trips Beautifully{% endblock %}
+{% block content %}
+
+<section class="hero-section" style="position:relative; overflow:hidden; padding: 100px 0 70px;">
+  <div style="position:absolute; inset:0; background: radial-gradient(700px 500px at 20% 10%, rgba(45,212,191,0.16), transparent 60%), radial-gradient(600px 500px at 90% 30%, rgba(232,180,90,0.14), transparent 60%); z-index:0;"></div>
+  <div class="container" style="position:relative; z-index:1;">
+    <div class="text-center" style="max-width:780px; margin:0 auto;">
+      <span class="eyebrow" style="justify-content:center;">AI-Assisted Trip Planning</span>
+      <h1>Where should your <span class="text-gold">next story</span> begin?</h1>
+      <p style="font-size:1.1rem; max-width:560px; margin:0 auto 32px;">Search real destinations, generate a day-by-day itinerary in seconds, and book the whole trip — all in one place.</p>
+
+      <form action="{{ url_for('main.search') }}" method="GET" class="glass" style="display:flex; gap:8px; padding:10px; border-radius: 999px; max-width:640px; margin: 0 auto; flex-wrap:wrap;">
+        <input type="text" name="q" placeholder="Try 'Santorini' or 'beach in Asia'" style="border:none; background:transparent; flex:1; min-width:180px;">
+        <button type="submit" class="btn btn-primary">Search Destinations</button>
+      </form>
+
+      <div class="flex gap-12 justify-between" style="max-width:520px; margin: 36px auto 0; flex-wrap:wrap; justify-content:center;">
+        {% for chip in ["Adventure","Luxury","Beach","Family","Solo"] %}
+        <a href="{{ url_for('main.search', travel_type=chip.lower()) }}" class="badge badge-teal">{{ chip }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <div class="grid grid-4">
+      <div class="card text-center" data-reveal>
+        <div class="value text-gold" style="font-family:var(--font-display); font-size:2.4rem;" data-counter="{{ stats.destinations }}">0</div>
+        <div class="text-muted" style="text-transform:uppercase; font-size:0.78rem; letter-spacing:0.05em;">Destinations</div>
+      </div>
+      <div class="card text-center" data-reveal>
+        <div class="value text-gold" style="font-family:var(--font-display); font-size:2.4rem;" data-counter="{{ stats.travelers }}">0</div>
+        <div class="text-muted" style="text-transform:uppercase; font-size:0.78rem; letter-spacing:0.05em;">Travelers</div>
+      </div>
+      <div class="card text-center" data-reveal>
+        <div class="value text-gold" style="font-family:var(--font-display); font-size:2.4rem;" data-counter="{{ stats.bookings }}">0</div>
+        <div class="text-muted" style="text-transform:uppercase; font-size:0.78rem; letter-spacing:0.05em;">Bookings Made</div>
+      </div>
+      <div class="card text-center" data-reveal>
+        <div class="value text-gold" style="font-family:var(--font-display); font-size:2.4rem;" data-counter="{{ stats.countries }}">0</div>
+        <div class="text-muted" style="text-transform:uppercase; font-size:0.78rem; letter-spacing:0.05em;">Countries</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if featured %}
+<section class="section">
+  <div class="container">
+    <div class="flex justify-between items-center" style="margin-bottom:28px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <span class="eyebrow">Featured</span>
+        <h2 style="margin:0;">Featured Trips</h2>
+      </div>
+      <a href="{{ url_for('main.search') }}" class="btn btn-ghost btn-sm">View All &rarr;</a>
+    </div>
+    <div class="grid grid-3">
+      {% for dest in featured %}
+      {% include "partials/_destination_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if popular %}
+<section class="section-sm" style="background: var(--ink-950);">
+  <div class="container">
+    <div style="margin-bottom:28px;">
+      <span class="eyebrow">Popular right now</span>
+      <h2 style="margin:0;">Popular Destinations</h2>
+    </div>
+    <div class="grid grid-4">
+      {% for dest in popular %}
+      {% include "partials/_destination_card_small.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:48px;">
+      <span class="eyebrow" style="justify-content:center;">Why TravelVista</span>
+      <h2>Built for travelers who want it handled well</h2>
+    </div>
+    <div class="grid grid-3">
+      <div class="card" data-reveal>
+        <h3>&#10024; AI Trip Planner</h3>
+        <p>Tell us your budget, days, and travel style — get a full day-by-day itinerary with packing tips in seconds.</p>
+      </div>
+      <div class="card" data-reveal>
+        <h3>&#128274; Secure Bookings</h3>
+        <p>Every booking is encrypted end-to-end, with instant confirmation and full booking history.</p>
+      </div>
+      <div class="card" data-reveal>
+        <h3>&#127760; Curated Destinations</h3>
+        <p>Real reviews, verified pricing, and honest safety tips for every destination on the platform.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:40px;">
+      <span class="eyebrow" style="justify-content:center;">What travelers say</span>
+      <h2>Testimonials</h2>
+    </div>
+    <div class="grid grid-3">
+      <div class="card" data-reveal>
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p style="margin-top:12px;">"The AI planner nailed our Kyoto itinerary down to the hour. Booking was effortless."</p>
+        <strong>— Priya M.</strong>
+      </div>
+      <div class="card" data-reveal>
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p style="margin-top:12px;">"Best travel platform I've used. The dashboard keeps every trip organized in one place."</p>
+        <strong>— Daniel K.</strong>
+      </div>
+      <div class="card" data-reveal>
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+        <p style="margin-top:12px;">"Loved the destination detail pages — safety tips and best time to visit saved us real planning time."</p>
+        <strong>— Amara O.</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <div class="card" style="padding:48px; text-align:center;" data-reveal>
+      <span class="eyebrow" style="justify-content:center;">Stay in the loop</span>
+      <h2>Get new destinations in your inbox</h2>
+      <p style="max-width:480px; margin:0 auto 24px;">No spam — just curated trip ideas and occasional deals.</p>
+      <form style="display:flex; gap:8px; max-width:420px; margin:0 auto; flex-wrap:wrap;" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed!';">
+        <input type="email" placeholder="you@example.com" required style="flex:1; min-width:200px;">
+        <button type="submit" class="btn btn-teal">Subscribe</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

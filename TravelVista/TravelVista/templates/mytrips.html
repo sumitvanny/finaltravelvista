@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}My Trips — TravelVista{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/planner.css') }}">{% endblock %}
+{% block content %}
+<div class="container" style="padding:40px 0 80px;">
+  <div class="flex justify-between items-center" style="flex-wrap:wrap; gap:16px;">
+    <div>
+      <span class="eyebrow">Saved itineraries</span>
+      <h1 style="margin:0;">My Trips</h1>
+    </div>
+    <a href="{{ url_for('main.planner') }}" class="btn btn-primary">+ New AI Itinerary</a>
+  </div>
+
+  {% if parsed_trips %}
+  {% for trip, plan in parsed_trips %}
+  <div class="card" style="margin-top:24px;">
+    <div class="flex justify-between items-center" style="margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h3 style="margin:0;">{{ trip.destination_name }}</h3>
+        <p class="text-muted mb-0" style="font-size:0.85rem;">{{ trip.days }} days &middot; {{ trip.travel_style|title }} &middot; {{ trip.travelers }} traveler(s) &middot; Generated {{ trip.created_at.strftime('%b %d, %Y') }}</p>
+      </div>
+      <form action="{{ url_for('main.delete_trip', trip_id=trip.id) }}" method="POST" onsubmit="return confirm('Delete this saved itinerary?');">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+      </form>
+    </div>
+
+    <button class="tab-btn active" onclick="this.closest('.card').querySelector('.trip-details').classList.toggle('hidden')" style="border:1px solid var(--glass-border); border-radius:var(--radius-full); padding:8px 16px;">Toggle Details</button>
+
+    <div class="trip-details" style="margin-top:16px;">
+      {% for day in plan.days %}
+      <div class="itinerary-day">
+        <h4 style="margin-bottom:10px;">{{ day.title }}</h4>
+        {% for item in day.schedule %}
+        <div class="itinerary-schedule-item">
+          <span class="itinerary-time">{{ item.time }}</span>
+          <span>{{ item.activity }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+      <div class="budget-breakdown-grid" style="margin-top:16px;">
+        <div class="budget-item"><div class="amount">${{ "%.0f"|format(plan.estimated_budget.per_person_total) }}</div><div class="text-muted" style="font-size:0.78rem;">Per Person</div></div>
+        <div class="budget-item"><div class="amount">${{ "%.0f"|format(plan.estimated_budget.accommodation) }}</div><div class="text-muted" style="font-size:0.78rem;">Accommodation</div></div>
+        <div class="budget-item"><div class="amount">${{ "%.0f"|format(plan.estimated_budget.food) }}</div><div class="text-muted" style="font-size:0.78rem;">Food</div></div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="empty-state">
+    <div class="icon">&#128506;</div>
+    <h3>No saved itineraries yet</h3>
+    <p>Generate your first AI trip plan to see it here.</p>
+    <a href="{{ url_for('main.planner') }}" class="btn btn-primary">Open AI Planner</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

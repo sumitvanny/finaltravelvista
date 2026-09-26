@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — TravelVista</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+<div class="flash-container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="flash flash-{{ category }}"><span>{{ message }}</span><button class="flash-close">&times;</button></div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+<div class="admin-login-wrap">
+  <div class="auth-card fade-in" style="max-width:380px;">
+    <div class="text-center" style="margin-bottom:8px;">
+      <span class="eyebrow" style="justify-content:center;">Restricted Access</span>
+    </div>
+    <h1 class="text-center">Admin Login</h1>
+    <p class="auth-sub text-center">TravelVista control panel</p>
+
+    <form method="POST" action="{{ url_for('admin.admin_login') }}" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="field">
+        <label for="username">Username</label>
+        {{ form.username(id="username", placeholder="admin", class="input-error" if form.username.errors else "") }}
+        {% for err in form.username.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        {{ form.password(id="password", placeholder="••••••••", class="input-error" if form.password.errors else "") }}
+        {% for err in form.password.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Log In</button>
+    </form>
+    <p class="auth-footer-link"><a href="{{ url_for('main.index') }}" class="text-muted">&larr; Back to TravelVista</a></p>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

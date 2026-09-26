@@ -1,0 +1,20 @@
+<div class="card flex justify-between items-center" style="margin-bottom:14px; flex-wrap:wrap; gap:16px;">
+  <div class="flex gap-16 items-center">
+    <img src="{{ url_for('static', filename='images/uploads/destinations/' ~ bk.destination.cover_image) if bk.destination.cover_image != 'default_destination.jpg' else url_for('static', filename='images/default_destination.jpg') }}" style="width:64px; height:64px; border-radius:var(--radius-sm); object-fit:cover;">
+    <div>
+      <strong>{{ bk.destination.name }}</strong>
+      <p class="text-muted mb-0" style="font-size:0.85rem;">{{ bk.hotel_name }} &middot; {{ bk.travel_date.strftime('%b %d, %Y') }} &middot; {{ bk.passengers }} passenger(s)</p>
+      <span class="text-mono text-muted" style="font-size:0.78rem;">{{ bk.booking_reference }}</span>
+    </div>
+  </div>
+  <div class="flex gap-12 items-center">
+    <span class="badge badge-{{ bk.status }}">{{ bk.status|title }}</span>
+    <span class="text-mono text-gold">${{ "%.2f"|format(bk.total_amount) }}</span>
+    {% if bk.status == 'confirmed' %}
+    <form action="{{ url_for('main.cancel_booking', booking_id=bk.id) }}" method="POST" onsubmit="return confirm('Cancel this booking?');">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+    </form>
+    {% endif %}
+  </div>
+</div>

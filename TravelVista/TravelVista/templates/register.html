@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Create Account — TravelVista{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-visual">
+    <div class="auth-visual-content">
+      <span class="eyebrow">Join TravelVista</span>
+      <h2>Your next itinerary is a few clicks away.</h2>
+      <p class="auth-quote">Save destinations, generate AI itineraries, and manage every booking in one place.</p>
+    </div>
+  </div>
+
+  <div class="auth-form-side">
+    <div class="auth-card register fade-in">
+      <h1>Create your account</h1>
+      <p class="auth-sub">Free to join. Start planning in minutes.</p>
+
+      <form method="POST" action="{{ url_for('auth.register') }}" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="field">
+          <label for="full_name">Full Name</label>
+          {{ form.full_name(id="full_name", placeholder="Jane Doe", class="input-error" if form.full_name.errors else "") }}
+          {% for err in form.full_name.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="username">Username</label>
+          {{ form.username(id="username", placeholder="janedoe", class="input-error" if form.username.errors else "") }}
+          {% for err in form.username.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          {{ form.email(id="email", placeholder="you@example.com", class="input-error" if form.email.errors else "") }}
+          {% for err in form.email.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          {{ form.password(id="password", placeholder="At least 8 characters", class="input-error" if form.password.errors else "") }}
+          {% for err in form.password.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="confirm_password">Confirm Password</label>
+          {{ form.confirm_password(id="confirm_password", placeholder="Re-enter password", class="input-error" if form.confirm_password.errors else "") }}
+          {% for err in form.confirm_password.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+        <p class="terms-row">By signing up, you agree to our Terms of Service and Privacy Policy.</p>
+        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+      </form>
+
+      <p class="auth-footer-link">Already have an account? <a href="{{ url_for('auth.login') }}" class="text-gold">Log in</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

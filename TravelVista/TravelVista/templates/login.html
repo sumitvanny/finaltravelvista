@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Log In — TravelVista{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-visual">
+    <div class="auth-visual-content">
+      <span class="eyebrow">Welcome back</span>
+      <h2>Every great trip starts with a single search.</h2>
+      <p class="auth-quote">"The world is a book, and those who do not travel read only one page."</p>
+    </div>
+  </div>
+
+  <div class="auth-form-side">
+    <div class="auth-card fade-in">
+      <h1>Log in</h1>
+      <p class="auth-sub">Access your dashboard, bookings, and saved trips.</p>
+
+      <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="field">
+          <label for="email">Email</label>
+          {{ form.email(id="email", placeholder="you@example.com", class="input-error" if form.email.errors else "") }}
+          {% for err in form.email.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          {{ form.password(id="password", placeholder="••••••••", class="input-error" if form.password.errors else "") }}
+          {% for err in form.password.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="flex justify-between items-center" style="margin-bottom: 20px;">
+          <label class="checkbox-row"><input type="checkbox" name="remember"> Remember me</label>
+          <a href="{{ url_for('auth.forgot_password') }}" class="text-teal" style="font-size:0.85rem;">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Log In</button>
+      </form>
+
+      <p class="auth-footer-link">Don't have an account? <a href="{{ url_for('auth.register') }}" class="text-gold">Sign up</a></p>
+      <p class="auth-footer-link"><a href="{{ url_for('admin.admin_login') }}" class="text-muted">Admin login &rarr;</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+.planner-layout { display: grid; grid-template-columns: 380px 1fr; gap: 32px; padding: 40px 0 80px; align-items: start; }
+.planner-form-card { position: sticky; top: 94px; }
+.itinerary-day { border-left: 2px dotted var(--gold-400); padding-left: 24px; margin-bottom: 28px; position: relative; }
+.itinerary-day::before { content: ""; position: absolute; left: -7px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold-400); }
+.itinerary-schedule-item { display: flex; gap: 16px; padding: 8px 0; }
+.itinerary-time { font-family: var(--font-mono); color: var(--teal-400); font-size: 0.82rem; min-width: 80px; }
+.budget-breakdown-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; }
+.budget-item { padding: 16px; border-radius: var(--radius-md); background: rgba(255,255,255,0.03); text-align: center; }
+.budget-item .amount { font-family: var(--font-mono); font-size: 1.3rem; color: var(--gold-400); }
+.packing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.packing-chip { padding: 10px 14px; border-radius: var(--radius-sm); background: rgba(45,212,191,0.08); border: 1px solid rgba(45,212,191,0.2); font-size: 0.85rem; }
+@media (max-width: 900px) {
+  .planner-layout { grid-template-columns: 1fr; }
+  .planner-form-card { position: static; }
+}

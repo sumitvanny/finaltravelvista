@@ -1,0 +1,49 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Destinations — TravelVista Admin{% endblock %}
+{% block content %}
+<div class="admin-topbar">
+  <h1>Destination Management</h1>
+  <a href="{{ url_for('admin.new_destination') }}" class="btn btn-primary">+ Add Destination</a>
+</div>
+
+<form method="GET" class="admin-search-bar">
+  <input type="text" name="q" value="{{ query }}" placeholder="Search by name or country...">
+  <button type="submit" class="btn btn-ghost">Search</button>
+</form>
+
+<div class="card">
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead><tr><th>Image</th><th>Name</th><th>Country</th><th>Type</th><th>Price</th><th>Rating</th><th>Featured</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for d in destinations %}
+        <tr>
+          <td><img class="thumb-sm" src="{{ url_for('static', filename='images/uploads/destinations/' ~ d.cover_image) if d.cover_image != 'default_destination.jpg' else url_for('static', filename='images/default_destination.jpg') }}"></td>
+          <td>{{ d.name }}</td>
+          <td>{{ d.country }}</td>
+          <td><span class="badge badge-teal">{{ d.travel_type|title }}</span></td>
+          <td class="text-mono">${{ "%.0f"|format(d.price_per_person) }}</td>
+          <td class="stars">&#9733; {{ d.rating }}</td>
+          <td>{{ "&#9989;" | safe if d.is_featured else "&mdash;" }}</td>
+          <td class="row-actions">
+            <a href="{{ url_for('admin.edit_destination', destination_id=d.id) }}" class="icon-btn" title="Edit">&#9998;&#65039;</a>
+            <form action="{{ url_for('admin.delete_destination', destination_id=d.id) }}" method="POST" onsubmit="return confirm('Delete {{ d.name }}? This removes all its bookings history reference.');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="icon-btn" title="Delete">&#128465;&#65039;</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-muted" style="padding:32px;">No destinations found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="pagination">
+  {% if pagination.has_prev %}<a href="{{ url_for('admin.destinations', page=pagination.prev_num, q=query) }}">&larr; Prev</a>{% endif %}
+  <span class="active">{{ pagination.page }}</span>
+  {% if pagination.has_next %}<a href="{{ url_for('admin.destinations', page=pagination.next_num, q=query) }}">Next &rarr;</a>{% endif %}
+</div>
+{% endblock %}

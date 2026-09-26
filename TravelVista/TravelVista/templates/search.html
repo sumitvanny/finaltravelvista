@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Search Destinations — TravelVista{% endblock %}
+{% block content %}
+<div class="container" style="padding: 40px 0 80px;">
+  <div style="margin-bottom:28px;">
+    <span class="eyebrow">Explore</span>
+    <h1 style="margin:0;">Search Destinations</h1>
+  </div>
+
+  <div class="card" style="margin-bottom:32px;">
+    <form method="GET" action="{{ url_for('main.search') }}">
+      <div class="grid" style="grid-template-columns: 2fr 1fr 1fr; gap:16px;">
+        <div class="field mb-0">
+          <label>Keyword / Country / City</label>
+          <input type="text" name="q" value="{{ filters.get('q','') }}" placeholder="e.g. Greece, beach, Kyoto">
+        </div>
+        <div class="field mb-0">
+          <label>Travel Type</label>
+          <select name="travel_type">
+            <option value="">Any</option>
+            {% for t in travel_types %}
+            <option value="{{ t }}" {{ "selected" if filters.get('travel_type') == t }}>{{ t|title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field mb-0">
+          <label>Min Rating</label>
+          <select name="min_rating">
+            <option value="">Any</option>
+            {% for r in [4.5, 4, 3.5, 3] %}
+            <option value="{{ r }}" {{ "selected" if filters.get('min_rating')|string == r|string }}>{{ r }}+ stars</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="grid" style="grid-template-columns: 1fr 1fr 1fr auto; gap:16px; margin-top:8px;">
+        <div class="field mb-0">
+          <label>Min Budget ($)</label>
+          <input type="number" name="min_budget" value="{{ filters.get('min_budget','') }}" min="0">
+        </div>
+        <div class="field mb-0">
+          <label>Max Budget ($)</label>
+          <input type="number" name="max_budget" value="{{ filters.get('max_budget','') }}" min="0">
+        </div>
+        <div class="field mb-0">
+          <label>Min Duration (days)</label>
+          <input type="number" name="min_duration" value="{{ filters.get('min_duration','') }}" min="1">
+        </div>
+        <div class="field mb-0" style="display:flex; align-items:flex-end;">
+          <button type="submit" class="btn btn-primary btn-block">Search</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <p class="text-muted">{{ pagination.total }} destination{{ 's' if pagination.total != 1 }} found</p>
+
+  {% if destinations %}
+  <div class="grid grid-3" style="margin-top:16px;">
+    {% for dest in destinations %}
+    {% include "partials/_destination_card.html" %}
+    {% endfor %}
+  </div>
+
+  <div class="pagination">
+    {% if pagination.has_prev %}
+      <a href="{{ url_for('main.search', page=pagination.prev_num, **filters) }}">&larr; Prev</a>
+    {% else %}
+      <span class="disabled">&larr; Prev</span>
+    {% endif %}
+    {% for p in pagination.iter_pages() %}
+      {% if p %}
+        {% if p == pagination.page %}
+          <span class="active">{{ p }}</span>
+        {% else %}
+          <a href="{{ url_for('main.search', page=p, **filters) }}">{{ p }}</a>
+        {% endif %}
+      {% else %}
+        <span>&hellip;</span>
+      {% endif %}
+    {% endfor %}
+    {% if pagination.has_next %}
+      <a href="{{ url_for('main.search', page=pagination.next_num, **filters) }}">Next &rarr;</a>
+    {% else %}
+      <span class="disabled">Next &rarr;</span>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="icon">&#128269;</div>
+    <h3>No destinations match your filters</h3>
+    <p>Try widening your budget range or clearing a filter.</p>
+    <a href="{{ url_for('main.search') }}" class="btn btn-ghost">Clear Filters</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

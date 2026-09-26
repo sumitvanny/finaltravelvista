@@ -1,0 +1,10 @@
+<a href="{{ url_for('main.destination_detail', destination_id=dest.id) }}" class="card fade-in" data-reveal style="padding:0; overflow:hidden; display:block;">
+  <div style="aspect-ratio:4/3; overflow:hidden;">
+    <img src="{{ url_for('static', filename='images/uploads/destinations/' ~ dest.cover_image) if dest.cover_image != 'default_destination.jpg' else url_for('static', filename='images/default_destination.jpg') }}"
+         alt="{{ dest.name }}" style="width:100%; height:100%; object-fit:cover;">
+  </div>
+  <div style="padding:14px;">
+    <h3 style="margin:0; font-size:0.98rem;">{{ dest.name }}</h3>
+    <p class="text-muted" style="margin:4px 0 0; font-size:0.8rem;">{{ dest.country }} &middot; <span class="text-gold">${{ "%.0f"|format(dest.price_per_person) }}</span></p>
+  </div>
+</a>

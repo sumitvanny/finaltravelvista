@@ -1,0 +1,109 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Dashboard — TravelVista Admin{% endblock %}
+{% block content %}
+<div class="admin-topbar">
+  <h1>Dashboard</h1>
+  <span class="text-muted text-mono" style="font-size:0.82rem;">Logged in as {{ current_user.username }}</span>
+</div>
+
+<div class="kpi-grid">
+  <div class="card kpi-card">
+    <div class="kpi-icon" style="background:rgba(45,212,191,0.15); color:var(--teal-400);">&#128100;</div>
+    <div class="kpi-value">{{ total_users }}</div>
+    <div class="kpi-label">Total Users</div>
+  </div>
+  <div class="card kpi-card">
+    <div class="kpi-icon" style="background:rgba(232,180,90,0.15); color:var(--gold-400);">&#127974;</div>
+    <div class="kpi-value">{{ total_bookings }}</div>
+    <div class="kpi-label">Total Bookings</div>
+  </div>
+  <div class="card kpi-card">
+    <div class="kpi-icon" style="background:rgba(74,222,128,0.15); color:var(--success);">&#128176;</div>
+    <div class="kpi-value">${{ "%.0f"|format(total_revenue) }}</div>
+    <div class="kpi-label">Total Revenue</div>
+  </div>
+  <div class="card kpi-card">
+    <div class="kpi-icon" style="background:rgba(96,165,250,0.15); color:var(--info);">&#127760;</div>
+    <div class="kpi-value">{{ total_destinations }}</div>
+    <div class="kpi-label">Destinations</div>
+  </div>
+  <div class="card kpi-card">
+    <div class="kpi-icon" style="background:rgba(248,113,113,0.15); color:var(--danger);">&#128172;</div>
+    <div class="kpi-value">{{ unread_messages }}</div>
+    <div class="kpi-label">Unread Messages</div>
+  </div>
+</div>
+
+<div class="grid" style="grid-template-columns: 1.5fr 1fr; align-items:start; margin-bottom:28px;">
+  <div class="card">
+    <h3>Top Booked Destinations</h3>
+    {% for name, cnt in top_destinations %}
+    <div class="chart-bar-row">
+      <span style="min-width:160px; font-size:0.85rem;">{{ name }}</span>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:{{ (cnt / (top_destinations[0][1] or 1) * 100)|round }}%;"></div></div>
+      <span class="text-mono" style="font-size:0.82rem;">{{ cnt }}</span>
+    </div>
+    {% else %}
+    <p class="text-muted">No bookings yet.</p>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <h3>Recent Activity</h3>
+    <div class="flex flex-col gap-12">
+      {% for log in recent_activity %}
+      <div style="font-size:0.85rem; border-bottom:1px solid var(--glass-border); padding-bottom:10px;">
+        <div>{{ log.action }}</div>
+        <span class="text-muted" style="font-size:0.75rem;">{{ log.created_at.strftime('%b %d, %I:%M %p') }}</span>
+      </div>
+      {% else %}
+      <p class="text-muted">No activity recorded yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="grid" style="grid-template-columns: 1fr 1fr; align-items:start;">
+  <div class="card">
+    <div class="flex justify-between items-center" style="margin-bottom:12px;">
+      <h3 style="margin:0;">Recent Bookings</h3>
+      <a href="{{ url_for('admin.bookings') }}" class="btn btn-ghost btn-sm">View All</a>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Reference</th><th>Destination</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for bk in recent_bookings %}
+          <tr>
+            <td class="text-mono">{{ bk.booking_reference }}</td>
+            <td>{{ bk.destination.name }}</td>
+            <td><span class="badge badge-{{ bk.status }}">{{ bk.status|title }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="flex justify-between items-center" style="margin-bottom:12px;">
+      <h3 style="margin:0;">Recent Users</h3>
+      <a href="{{ url_for('admin.users') }}" class="btn btn-ghost btn-sm">View All</a>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Username</th><th>Email</th><th>Joined</th></tr></thead>
+        <tbody>
+          {% for u in recent_users %}
+          <tr>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+            <td class="text-muted">{{ u.created_at.strftime('%b %d, %Y') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

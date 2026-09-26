@@ -1,0 +1,90 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}{{ "Add" if mode == "create" else "Edit" }} Destination — TravelVista Admin{% endblock %}
+{% block content %}
+<div class="admin-topbar">
+  <h1>{{ "Add Destination" if mode == "create" else "Edit " + dest.name }}</h1>
+  <a href="{{ url_for('admin.destinations') }}" class="btn btn-ghost">&larr; Back to List</a>
+</div>
+
+<form method="POST" enctype="multipart/form-data" novalidate>
+  {{ form.hidden_tag() }}
+  <div class="grid" style="grid-template-columns: 2fr 1fr; align-items:start;">
+    <div class="card">
+      <h3>Basic Information</h3>
+      <div class="grid grid-2">
+        <div class="field"><label>Name</label>{{ form.name(class="input-error" if form.name.errors else "") }}</div>
+        <div class="field"><label>City</label>{{ form.city() }}</div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field"><label>Country</label>{{ form.country(class="input-error" if form.country.errors else "") }}</div>
+        <div class="field"><label>Travel Type</label>{{ form.travel_type() }}</div>
+      </div>
+      <div class="field"><label>Short Description</label>{{ form.description(rows="2", class="input-error" if form.description.errors else "") }}</div>
+      <div class="field"><label>Overview</label>{{ form.overview(rows="4") }}</div>
+
+      <div class="grid grid-2">
+        <div class="field"><label>Price Per Person ($)</label>{{ form.price_per_person(class="input-error" if form.price_per_person.errors else "") }}</div>
+        <div class="field"><label>Typical Duration (days)</label>{{ form.duration_days(class="input-error" if form.duration_days.errors else "") }}</div>
+      </div>
+      <div class="field"><label>Best Time To Visit</label>{{ form.best_time_to_visit() }}</div>
+      <div class="field"><label>Safety Tips</label>{{ form.safety_tips(rows="3") }}</div>
+      <div class="field"><label>Things To Do (one per line)</label>{{ form.things_to_do(rows="4") }}</div>
+      <div class="grid grid-2">
+        <div class="field"><label>Hotels (one per line)</label>{{ form.hotels(rows="4") }}</div>
+        <div class="field"><label>Restaurants (one per line)</label>{{ form.restaurants(rows="4") }}</div>
+      </div>
+      <div class="field"><label>Transportation (one per line)</label>{{ form.transportation(rows="3") }}</div>
+      <div class="grid grid-2">
+        <div class="field"><label>Map Latitude</label>{{ form.map_lat() }}</div>
+        <div class="field"><label>Map Longitude</label>{{ form.map_lng() }}</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:20px;">
+        <h3>Cover Image</h3>
+        {% if mode == "edit" %}
+        <img src="{{ url_for('static', filename='images/uploads/destinations/' ~ dest.cover_image) if dest.cover_image != 'default_destination.jpg' else url_for('static', filename='images/default_destination.jpg') }}" style="width:100%; border-radius:var(--radius-md); margin-bottom:12px; aspect-ratio:16/10; object-fit:cover;" id="cover-preview">
+        {% else %}
+        <div class="skeleton" id="cover-preview" style="width:100%; aspect-ratio:16/10; margin-bottom:12px;"></div>
+        {% endif %}
+        <div class="field">
+          {{ form.cover_image(**{"data-preview": "cover-preview"}) }}
+          {% for err in form.cover_image.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <label class="checkbox-row" style="margin-bottom:10px;">{{ form.is_featured() }} Featured on homepage</label>
+        <label class="checkbox-row">{{ form.is_popular() }} Mark as popular</label>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">{{ "Create Destination" if mode == "create" else "Save Changes" }}</button>
+    </div>
+  </div>
+</form>
+
+{% if mode == "edit" %}
+<div class="card" style="margin-top:24px;">
+  <h3>Gallery Images</h3>
+  <form method="POST" action="{{ url_for('admin.upload_gallery_image', destination_id=dest.id) }}" enctype="multipart/form-data" class="flex gap-12" style="margin-bottom:20px;">
+    {{ gallery_form.hidden_tag() }}
+    {{ gallery_form.images() }}
+    <button type="submit" class="btn btn-teal">Upload</button>
+  </form>
+  <div class="grid grid-4">
+    {% for img in dest.images %}
+    <div style="position:relative;">
+      <img src="{{ url_for('static', filename='images/uploads/destinations/' ~ img.filename) }}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:var(--radius-sm);">
+      <form action="{{ url_for('admin.delete_gallery_image', image_id=img.id) }}" method="POST" style="position:absolute; top:6px; right:6px;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="icon-btn" title="Remove" onclick="return confirm('Remove this image?');">&times;</button>
+      </form>
+    </div>
+    {% else %}
+    <p class="text-muted">No gallery images yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

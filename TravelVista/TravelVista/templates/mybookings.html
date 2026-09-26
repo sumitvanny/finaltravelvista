@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}My Bookings — TravelVista{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">{% endblock %}
+{% block content %}
+<div class="container" style="padding:40px 0 80px;">
+  <span class="eyebrow">Trips</span>
+  <h1>My Bookings</h1>
+
+  <div class="tabs" data-tab-container>
+    <button class="tab-btn active" data-tab-target="tab-upcoming">Upcoming ({{ upcoming|length }})</button>
+    <button class="tab-btn" data-tab-target="tab-past">Past ({{ past|length }})</button>
+    <button class="tab-btn" data-tab-target="tab-cancelled">Cancelled ({{ cancelled|length }})</button>
+  </div>
+
+  <div id="tab-upcoming" class="tab-panel active">
+    {% for bk in upcoming %}
+    {% include "partials/_booking_row.html" %}
+    {% else %}
+    <div class="empty-state"><div class="icon">&#128197;</div><h3>No upcoming trips</h3><p>Time to plan your next adventure.</p><a href="{{ url_for('main.search') }}" class="btn btn-primary">Browse Destinations</a></div>
+    {% endfor %}
+  </div>
+
+  <div id="tab-past" class="tab-panel">
+    {% for bk in past %}
+    {% include "partials/_booking_row.html" %}
+    {% else %}
+    <div class="empty-state"><div class="icon">&#128188;</div><h3>No past trips yet</h3></div>
+    {% endfor %}
+  </div>
+
+  <div id="tab-cancelled" class="tab-panel">
+    {% for bk in cancelled %}
+    {% include "partials/_booking_row.html" %}
+    {% else %}
+    <div class="empty-state"><div class="icon">&#128683;</div><h3>No cancelled bookings</h3></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

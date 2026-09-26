@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}My Wishlist — TravelVista{% endblock %}
+{% block content %}
+<div class="container" style="padding:40px 0 80px;">
+  <span class="eyebrow">Saved</span>
+  <h1>My Wishlist</h1>
+
+  {% if items %}
+  <div class="grid grid-3" style="margin-top:24px;">
+    {% for item in items %}
+    <div class="card" style="padding:0; overflow:hidden;">
+      <a href="{{ url_for('main.destination_detail', destination_id=item.destination.id) }}" style="display:block; aspect-ratio:16/11; overflow:hidden;">
+        <img src="{{ url_for('static', filename='images/uploads/destinations/' ~ item.destination.cover_image) if item.destination.cover_image != 'default_destination.jpg' else url_for('static', filename='images/default_destination.jpg') }}" style="width:100%; height:100%; object-fit:cover;">
+      </a>
+      <div style="padding:18px;">
+        <h3 style="margin:0 0 6px; font-size:1.05rem;">{{ item.destination.name }}</h3>
+        <p class="text-muted" style="font-size:0.85rem; margin-bottom:14px;">{{ item.destination.country }} &middot; ${{ "%.0f"|format(item.destination.price_per_person) }}/person</p>
+        <div class="flex gap-8">
+          <a href="{{ url_for('main.destination_detail', destination_id=item.destination.id) }}" class="btn btn-ghost btn-sm">View</a>
+          <form action="{{ url_for('main.toggle_wishlist', destination_id=item.destination.id) }}" method="POST" style="flex:1;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-danger btn-sm btn-block">Remove</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="icon">&#9825;</div>
+    <h3>Your wishlist is empty</h3>
+    <p>Save destinations you're dreaming about — they'll show up here.</p>
+    <a href="{{ url_for('main.search') }}" class="btn btn-primary">Explore Destinations</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

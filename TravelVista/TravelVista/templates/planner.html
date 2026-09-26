@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}AI Trip Planner — TravelVista{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/planner.css') }}">{% endblock %}
+{% block content %}
+<div class="container">
+  <div style="padding-top:40px;">
+    <span class="eyebrow">AI Trip Planner</span>
+    <h1>Plan your next trip in seconds</h1>
+    <p class="text-muted" style="max-width:600px;">Tell us your destination, budget, and style — we'll generate a full day-by-day itinerary, packing list, and budget breakdown.</p>
+  </div>
+
+  <div class="planner-layout">
+    <div class="card planner-form-card">
+      <h3>Trip Details</h3>
+      <form method="POST" id="planner-form" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="field">
+          <label for="destination">Destination</label>
+          {{ form.destination(id="destination", placeholder="e.g. Bali, Indonesia", class="input-error" if form.destination.errors else "") }}
+          {% for err in form.destination.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="budget">Total Budget ($)</label>
+          {{ form.budget(id="budget", placeholder="2000", class="input-error" if form.budget.errors else "") }}
+          {% for err in form.budget.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="days">Number of Days</label>
+          {{ form.days(id="days", placeholder="5", class="input-error" if form.days.errors else "") }}
+          {% for err in form.days.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="travelers">Number of Travelers</label>
+          {{ form.travelers(id="travelers", placeholder="2", class="input-error" if form.travelers.errors else "") }}
+          {% for err in form.travelers.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="travel_style">Travel Style</label>
+          {{ form.travel_style(id="travel_style") }}
+        </div>
+        <div class="field">
+          <label for="interests">Interests (optional)</label>
+          {{ form.interests(id="interests", placeholder="food, history, hiking") }}
+          <div class="hint">Comma-separated. We'll weave these into your itinerary.</div>
+        </div>
+        <button type="submit" id="planner-submit-btn" class="btn btn-primary btn-block">Generate Itinerary</button>
+      </form>
+    </div>
+
+    <div>
+      {% if plan %}
+      <div class="card fade-in" style="margin-bottom:24px;">
+        <span class="eyebrow">Your itinerary</span>
+        <h2 style="margin:0;">{{ plan.destination }}</h2>
+        <p class="text-muted">{{ plan.days|length }} days &middot; {{ plan.estimated_budget.travelers }} traveler(s)</p>
+      </div>
+
+      <div class="card" style="margin-bottom:24px;">
+        <h3>Day-by-Day Schedule</h3>
+        {% for day in plan.days %}
+        <div class="itinerary-day">
+          <h4 style="margin-bottom:10px;">{{ day.title }}</h4>
+          {% for item in day.schedule %}
+          <div class="itinerary-schedule-item">
+            <span class="itinerary-time">{{ item.time }}</span>
+            <span>{{ item.activity }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="card" style="margin-bottom:24px;">
+        <h3>Estimated Budget</h3>
+        <div class="budget-breakdown-grid">
+          <div class="budget-item"><div class="amount">${{ "%.0f"|format(plan.estimated_budget.accommodation) }}</div><div class="text-muted" style="font-size:0.78rem;">Accommodation</div></div>
+          <div class="budget-item"><div class="amount">${{ "%.0f"|format(plan.estimated_budget.food) }}</div><div class="text-muted" style="font-size:0.78rem;">Food</div></div>
+          <div class="budget-item"><div class="amount">${{ "%.0f"|format(plan.estimated_budget.activities) }}</div><div class="text-muted" style="font-size:0.78rem;">Activities</div></div>
+          <div class="budget-item"><div class="amount">${{ "%.0f"|format(plan.estimated_budget.local_transport) }}</div><div class="text-muted" style="font-size:0.78rem;">Transport</div></div>
+          <div class="budget-item"><div class="amount">${{ "%.0f"|format(plan.estimated_budget.miscellaneous) }}</div><div class="text-muted" style="font-size:0.78rem;">Miscellaneous</div></div>
+          <div class="budget-item"><div class="amount">${{ "%.0f"|format(plan.estimated_budget.per_person_total) }}</div><div class="text-muted" style="font-size:0.78rem;">Per Person</div></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:24px;">
+        <h3>Packing Suggestions</h3>
+        <div class="packing-grid">
+          {% for item in plan.packing_list %}
+          <div class="packing-chip">&#127919; {{ item }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Travel Tips</h3>
+        <ul style="padding-left:18px; color:var(--mist-300);">
+          {% for tip in plan.tips %}<li style="margin-bottom:8px;">{{ tip }}</li>{% endfor %}
+        </ul>
+      </div>
+      {% else %}
+      <div class="empty-state card">
+        <div class="icon">&#9992;&#65039;</div>
+        <h3>Your itinerary will appear here</h3>
+        <p>Fill out the form and we'll build your day-by-day plan instantly.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/planner.js') }}"></script>{% endblock %}

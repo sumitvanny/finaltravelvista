@@ -1,0 +1,22 @@
+<a href="{{ url_for('main.destination_detail', destination_id=dest.id) }}" class="card fade-in" data-reveal style="padding:0; overflow:hidden; display:block;">
+  <div style="position:relative; aspect-ratio:16/11; overflow:hidden;">
+    <img src="{{ url_for('static', filename='images/uploads/destinations/' ~ dest.cover_image) if dest.cover_image != 'default_destination.jpg' else url_for('static', filename='images/default_destination.jpg') }}"
+         alt="{{ dest.name }}" style="width:100%; height:100%; object-fit:cover; transition: transform 0.4s ease;"
+         onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+    <span class="badge badge-gold" style="position:absolute; top:12px; left:12px;">{{ dest.travel_type|title }}</span>
+    {% if current_user.is_authenticated and current_user.__class__.__name__ == 'User' %}
+    <button class="wishlist-btn btn-ghost" data-destination-id="{{ dest.id }}" style="position:absolute; top:10px; right:10px; width:36px; height:36px; border-radius:50%; padding:0; border:none;" onclick="event.preventDefault(); event.stopPropagation();">&#9825;</button>
+    {% endif %}
+  </div>
+  <div style="padding:20px;">
+    <div class="flex justify-between items-center" style="margin-bottom:6px;">
+      <h3 style="margin:0; font-size:1.15rem;">{{ dest.name }}</h3>
+      <span class="stars" style="font-size:0.85rem;">&#9733; {{ dest.rating }}</span>
+    </div>
+    <p class="text-muted" style="margin:0 0 12px; font-size:0.88rem;">{{ dest.city }}{{ ", " if dest.city }}{{ dest.country }}</p>
+    <div class="flex justify-between items-center">
+      <span class="text-mono text-teal">${{ "%.0f"|format(dest.price_per_person) }}<span class="text-muted" style="font-size:0.75rem;">/person</span></span>
+      <span class="text-muted" style="font-size:0.82rem;">{{ dest.duration_days }} days</span>
+    </div>
+  </div>
+</a>

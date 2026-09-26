@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Book {{ dest.name }} — TravelVista{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/booking.css') }}">{% endblock %}
+{% block content %}
+<div class="container">
+  <div style="padding-top:40px;">
+    <span class="eyebrow">Booking</span>
+    <h1>Book Your Trip</h1>
+  </div>
+
+  <div class="booking-layout">
+    <div class="card">
+      <h3>Trip Details</h3>
+      <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        {{ form.destination_id }}
+        <div class="field">
+          <label for="hotel_name">Hotel</label>
+          {{ form.hotel_name(id="hotel_name", placeholder="e.g. " ~ (dest.hotels_list()[0] if dest.hotels_list() else "Choose a hotel"), class="input-error" if form.hotel_name.errors else "") }}
+          {% for err in form.hotel_name.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+          {% if dest.hotels_list() %}
+          <div class="hint">Suggestions: {{ dest.hotels_list()|join(", ") }}</div>
+          {% endif %}
+        </div>
+        <div class="grid grid-2">
+          <div class="field">
+            <label for="travel_date">Travel Date</label>
+            {{ form.travel_date(id="travel_date", class="input-error" if form.travel_date.errors else "") }}
+            {% for err in form.travel_date.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+          </div>
+          <div class="field">
+            <label for="return_date">Return Date (optional)</label>
+            {{ form.return_date(id="return_date") }}
+          </div>
+        </div>
+        <div class="field">
+          <label for="passengers">Number of Passengers</label>
+          {{ form.passengers(id="passengers", class="input-error" if form.passengers.errors else "") }}
+          {% for err in form.passengers.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="payment_method">Payment Method</label>
+          {{ form.payment_method(id="payment_method") }}
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Confirm & Pay</button>
+      </form>
+    </div>
+
+    <div class="card booking-summary">
+      <div class="summary-dest-img">
+        <img src="{{ url_for('static', filename='images/uploads/destinations/' ~ dest.cover_image) if dest.cover_image != 'default_destination.jpg' else url_for('static', filename='images/default_destination.jpg') }}" alt="{{ dest.name }}">
+      </div>
+      <h3 style="margin-bottom:2px;">{{ dest.name }}</h3>
+      <p class="text-muted" style="margin-bottom:16px;">{{ dest.city }}{{ ", " if dest.city }}{{ dest.country }}</p>
+
+      <div id="price-per-person-data" data-price="{{ dest.price_per_person }}"></div>
+      <div class="summary-row"><span>Price per person</span><span class="text-mono">${{ "%.2f"|format(dest.price_per_person) }}</span></div>
+      <div class="summary-row total"><span>Total</span><span id="total-amount-display" class="text-mono">${{ "%.2f"|format(dest.price_per_person) }}</span></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/booking.js') }}"></script>{% endblock %}
